@@ -1,0 +1,86 @@
+name: Build
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+concurrency:
+  group: ${{ github.workflow }}/${{ github.ref_type }}/${{ github.ref_name }}
+  cancel-in-progress: true
+permissions:
+  contents: none
+  deployments: none
+  actions: none
+  artifact-metadata: none
+  attestations: none
+  models: none
+  checks: none
+  discussions: none
+  id-token: none
+  issues: none
+  packages: none
+  pages: none
+  pull-requests: none
+  repository-projects: none
+  security-events: none
+  statuses: none
+jobs:
+  build-docker-image:
+    name: Build Docker Image
+    runs-on: ubuntu-24.04
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Get Tag
+        id: tag
+        run: |
+          tag=$(date -u +'%Y%m%d')
+          echo "tag=${tag}" >> $GITHUB_OUTPUT
+      - name: Docker Meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/${{ github.repository }}
+          tags: |
+            type=raw,value=${{ steps.tag.outputs.tag }},enable=${{ github.ref_name == github.event.repository.default_branch }}
+          labels: |
+            maintainer=${{ github.repository_owner }}
+            org.opencontainers.image.authors=${{ github.repository_owner }}
+          flavor: |
+            # See https://github.com/docker/metadata-action#latest-tag
+            latest=false
+            prefix=,onlatest=false
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+        with:
+          platforms: linux/amd64
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v4
+        with:
+          platforms: linux/amd64
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Docker Image Build and Push
+        uses: docker/build-push-action@v7
+        with:
+          push: true
+          pull: true
+          context: .
+          file: Dockerfile
+          no-cache: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64
+        timeout-minutes: 20
