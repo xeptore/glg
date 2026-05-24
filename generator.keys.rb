@@ -30,12 +30,6 @@ if public_key_file.nil? || private_key_file.nil?
   exit 1
 end
 
-if File.exist?(private_key_file) || File.exist?(public_key_file)
-  puts "[!] key pair already exists"
-  puts "[!] remove them if you want to regenerate"
-  exit 1
-end
-
 puts "[*] generating rsa key pair..."
 key = OpenSSL::PKey::RSA.new(2048)
 File.write(private_key_file, key.to_pem)

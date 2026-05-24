@@ -6,14 +6,15 @@ license_json_path = nil
 public_key_path = nil
 private_key_path = nil
 features_json_path = nil
-license_name="Tim Cook"
-license_company="Apple Computer, Inc."
-license_email="tcook@apple.com"
-license_plan='ultimate'
-license_user_count=2147483647
-license_expire_year=2500
+license_name = nil
+license_company = nil
+license_email = nil
+license_plan = nil
+license_user_count = nil
+license_expire_year = nil
 
 require 'optparse'
+
 OptionParser.new do |opts|
   opts.banner = "Usage: generator.license.rb [options]"
 
@@ -92,8 +93,6 @@ if license_user_count < 1
   exit 1
 end
 
-# ==========
-
 puts "[*] loading keys..."
 require 'openssl'
 PUBLIC_KEY = OpenSSL::PKey::RSA.new File.read(public_key_path)
@@ -112,8 +111,6 @@ else
 end
 puts "[*] total features to inject: #{FEATURE_LIST.size}"
 
-# ==========
-
 puts "[*] building a license..."
 
 Gitlab::License.encryption_key = PRIVATE_KEY
@@ -128,24 +125,18 @@ license.licensee = {
 }
 
 # required of course
-license.starts_at         = Date.new(1976, 4, 1)
+license.starts_at = Date.new(2026, 5, 24)
 puts Date.new()
 # required since gem gitlab-license v2.2.1
-license.expires_at        = Date.new(license_expire_year, 4, 1)
+license.expires_at = Date.new(license_expire_year, 12, 31)
 
 # prevent gitlab crash at
 # notification_start_date = trial? ? expires_at - NOTIFICATION_DAYS_BEFORE_TRIAL_EXPIRY : block_changes_at
-license.block_changes_at  = Date.new(license_expire_year, 4, 1)
+license.block_changes_at  = Date.new(license_expire_year, 12, 32)
 
-# required
-license.restrictions      = {
+license.restrictions = {
   plan: license_plan,
-  # STARTER_PLAN = 'starter'
-  # PREMIUM_PLAN = 'premium'
-  # ULTIMATE_PLAN = 'ultimate'
-
   active_user_count: license_user_count,
-  # required, just dont overflow
 }
 
 license.cloud_licensing_enabled = true
