@@ -100,7 +100,7 @@ PUBLIC_KEY = OpenSSL::PKey::RSA.new File.read(public_key_path)
 PRIVATE_KEY = OpenSSL::PKey::RSA.new File.read(private_key_path)
 
 puts "[*] loading licenses..."
-require_relative '../lib/license.rb'
+require_relative 'lib/license.rb'
 puts "[i] lib gitlab-license: #{Gitlab::License::VERSION}"
 
 if !features_json_path.nil?
