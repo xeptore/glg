@@ -15,7 +15,6 @@ RUN <<eot bash
   rm -rf /tmp/gem
 eot
 
-COPY make.sh .
-COPY src/generator.keys.rb src/generator.license.rb src/
+COPY gen.sh generator.keys.rb generator.license.rb ./
 
-CMD [ "./make.sh" ]
+CMD [ "./gen.sh" ]
