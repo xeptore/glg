@@ -132,7 +132,7 @@ license.expires_at = Date.new(license_expire_year, 12, 31)
 
 # prevent gitlab crash at
 # notification_start_date = trial? ? expires_at - NOTIFICATION_DAYS_BEFORE_TRIAL_EXPIRY : block_changes_at
-license.block_changes_at  = Date.new(license_expire_year, 12, 32)
+license.block_changes_at  = Date.new(license_expire_year, 12, 31)
 
 license.restrictions = {
   plan: license_plan,
