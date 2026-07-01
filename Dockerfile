@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM docker.io/library/ruby:4@sha256:cc78012c8c6faaa2cd698535fff3b1c042301b8d49becec6691dd5c1af687d3a
+FROM docker.io/library/ruby:4@sha256:8400f102008d4e7322fbe610684312dfe1d1205550075c6c28834b5eb44afb97
 WORKDIR /license-generator
 
 RUN <<eot bash
