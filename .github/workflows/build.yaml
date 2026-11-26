@@ -48,6 +48,7 @@ jobs:
             ghcr.io/${{ github.repository }}
           tags: |
             type=raw,value=${{ steps.tag.outputs.tag }},enable=${{ github.ref_name == github.event.repository.default_branch }}
+            type=raw,value=edge,enable=${{ github.ref_name == github.event.repository.default_branch }}
           labels: |
             maintainer=${{ github.repository_owner }}
             org.opencontainers.image.authors=${{ github.repository_owner }}
